@@ -127,3 +127,24 @@ button.small{padding:6px 12px;font-size:.85rem}
 .cell.half.on{background:linear-gradient(90deg,var(--signal) 50%,var(--ok) 50%)}
 @media (max-width:520px){.portrait{flex-basis:84px;height:100px}.burst{font-size:2rem}}
 @media (prefers-reduced-motion:reduce){.comic.shake,.burst.go{animation:none}.burst.go{opacity:1;transform:rotate(-8deg) scale(1)}}
+
+/* 連珠炮大提示：「按兩下！」＋兩顆依序敲下的按鍵 */
+.double{position:absolute;left:50%;top:50%;z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;
+  transform:translate(-50%,-50%) scale(0);opacity:0}
+.double b{font-family:var(--f-display);font-weight:400;font-size:3rem;line-height:1;color:var(--ok);white-space:nowrap;
+  -webkit-text-stroke:2px #05070b;text-shadow:5px 5px 0 #05070b;transform:rotate(-6deg)}
+.double .taps{display:flex;gap:14px}
+.double .taps i{width:34px;height:34px;border-radius:50%;background:var(--ok);border:3px solid #05070b;box-shadow:3px 3px 0 #05070b}
+.double.show{animation:dbl-in 1.6s ease-out forwards}
+.double.show .taps i{animation:tap .4s ease-in-out 3}
+.double.show .taps i:nth-child(2){animation-delay:.2s}
+.double.urgent{animation-duration:.9s}
+.double.urgent b{color:var(--signal)}
+@keyframes dbl-in{0%{transform:translate(-50%,-50%) scale(.2);opacity:0}15%{transform:translate(-50%,-50%) scale(1.15);opacity:1}
+  25%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
+@keyframes tap{50%{transform:translateY(8px) scale(.85);box-shadow:0 0 0 #05070b}}
+.comic.t-D{outline:3px dashed var(--ok);outline-offset:-10px}
+.cell.target.dbl{background:repeating-linear-gradient(90deg,transparent 0 46%,color-mix(in srgb,var(--ok) 35%,transparent) 46% 54%,transparent 54%);border-color:var(--ok);color:var(--ok);font-size:1rem}
+.cell.target.dbl.now{animation:tap .3s 2}
+@media (max-width:520px){.double b{font-size:2.2rem}}
+@media (prefers-reduced-motion:reduce){.double.show{animation:none;opacity:1;transform:translate(-50%,-50%)}.double.show .taps i{animation:none}}

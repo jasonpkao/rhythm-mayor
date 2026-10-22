@@ -132,3 +132,4 @@ $('#btn-resume').addEventListener('click', ()=>setPaused(false));
 $('#btn-restart').addEventListener('click', start);
 $('#btn-restart2').addEventListener('click', start);
 $('#btn-quit').addEventListener('click', quit);
+$('#btn-home2').addEventListener('click', quit);

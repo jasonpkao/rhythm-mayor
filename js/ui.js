@@ -30,7 +30,7 @@ export function initTrack(chart){
 export function drawTrack(ph,b){
   cells.forEach((c,i)=>{
     c.className='cell'; c.textContent='';
-    if(i===TARGET){ c.classList.add('target'); c.textContent= ph?.type==='D' ? `${TARGET+1}·` : TARGET+1; if(b===TARGET) c.classList.add('now'); if(ph&&ph.result) c.classList.add('r-'+ph.result); }
+    if(i===TARGET){ c.classList.add('target'); c.textContent= ph?.type==='D' ? `${TARGET+1} ×2` : TARGET+1; if(ph?.type==='D') c.classList.add('dbl'); if(b===TARGET) c.classList.add('now'); if(ph&&ph.result) c.classList.add('r-'+ph.result); }
     else if(i>TARGET){ c.classList.add('rest'); }
     else if(!ph || ph.type!=='S'){ c.textContent=i+1; if(ph && b>=i) c.classList.add('on'); if(ph?.type==='D' && i===0){ c.classList.add('half'); c.textContent='1·'; } }
     else { if(i<TARGET-1){ c.classList.add('hid'); c.textContent='?'; } else { c.classList.add('alarm'); c.textContent='!'; if(b>=TARGET-1) c.classList.add('on'); } }
@@ -54,6 +54,8 @@ export function applyVis(S,v){
     comic.className='comic t-'+(ph.assist?'A':ph.type);
     $('#who').textContent = ph.type==='S' ? '記者會' : (ph.who||'市民');
     $('#portrait').innerHTML = portrait(ph, v.p);
+    // 連珠炮：題目一出現就跳大提示，第七拍前再閃一次
+    const dbl=$('#double'); dbl.className='double'; if (ph.type==='D'){ void dbl.offsetWidth; dbl.classList.add('show'); }
     const img=$('#scene-img');
     if (ph.image){ img.src=ph.image; img.hidden=false; img.onerror=()=>img.hidden=true; } else img.hidden=true;
     const tag=$('#tag'); tag.className='tag'+(ph.type==='S'?' s':'')+(ph.assist?' a':'');
@@ -63,6 +65,7 @@ export function applyVis(S,v){
     updAideBtn(S);
   }
   if (v.p===S.cur) drawTrack(ph, v.b);
+  if (ph.type==='D' && v.b===S.chart.targetBeat-1){ const d=$('#double'); d.className='double'; void d.offsetWidth; d.classList.add('show','urgent'); }
   if (v.b%2===0){ comic.classList.add('pulse'); setTimeout(()=>comic.classList.remove('pulse'),70); }
 }
 
@@ -73,7 +76,7 @@ export function burst(txt,cls){
 }
 export function resetComic(){
   $('#comic').className='comic'; $('#caption').textContent='第一章'; $('#who').textContent='';
-  $('#portrait').innerHTML=''; $('#scene-img').hidden=true; $('#burst').className='burst';
+  $('#portrait').innerHTML=''; $('#scene-img').hidden=true; $('#burst').className='burst'; $('#double').className='double';
 }
 
 export function showResult(S){
