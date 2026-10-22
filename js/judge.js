@@ -1,44 +1,52 @@
 // ---- judge ----
+// 判定以「判定點」為單位（S.tg）：一般與臨場題一個點，連珠炮兩個點（第七拍、第七拍半）
 import { targetTime } from './scheduler.js';
-import { fb, setReply, drawTrack, hud, name } from './ui.js';
+import { fb, setReply, drawTrack, hud, name, burst } from './ui.js';
 
 // 判定窗（秒）：p = 完美、g = 命中
-export const WINDOWS = { N: {p:.045, g:.10}, S: {p:.022, g:.05} };
+export const WINDOWS = { N: {p:.045, g:.10}, D: {p:.045, g:.10}, S: {p:.022, g:.05} };
 export const SEARCH = .2; // 超過這個距離就算空拍
-const FAV = { perfect:4, good:2, assist:1, miss:{ N:-6, S:-8 } };
+const FAV = { perfect:4, good:2, assist:1, miss:{ N:-6, D:-6, S:-8 } };
+const RANK = { perfect:0, good:1, assist:2, miss:3 };
 
 const pick = a => a[Math.floor(Math.random()*a.length)];
 
-// 找出離這次按鍵最近、尚未判定的題目；回傳 null 表示空拍
+// 找出離這次按鍵最近、尚未判定的判定點；回傳 null 表示空拍
 export function classify(S, adj){
   let best=-1, bd=9;
-  S.ph.forEach((ph,p)=>{ if(ph.judged||ph.assist) return; const d=adj-targetTime(S,p); if(Math.abs(d)<Math.abs(bd)){ bd=d; best=p; } });
+  S.tg.forEach((g,k)=>{ if(g.judged||S.ph[g.p].assist) return; const d=adj-targetTime(S,g.p,g.off); if(Math.abs(d)<Math.abs(bd)){ bd=d; best=k; } });
   if (best<0 || Math.abs(bd)>SEARCH) return null;
-  const w = WINDOWS[S.ph[best].type], a=Math.abs(bd);
-  return { p:best, res: a<=w.p?'perfect':a<=w.g?'good':'miss', d:bd };
+  const w = WINDOWS[S.ph[S.tg[best].p].type], a=Math.abs(bd);
+  return { k:best, res: a<=w.p?'perfect':a<=w.g?'good':'miss', d:bd };
 }
 
-export function judge(S,p,res,d){
-  const ph=S.ph[p]; ph.judged=true; ph.result=res; S.stats[res]++;
+export function judge(S,k,res,d){
+  const g=S.tg[k], p=g.p, ph=S.ph[p];
+  g.judged=true; g.result=res; S.stats[res]++;
+  if (ph.result==null || RANK[res]>RANK[ph.result]) ph.result=res; // 題目顯示最差的那一下
+  const mine = S.tg.filter(x=>x.p===p);
+  ph.judged = mine.every(x=>x.judged);
+  const last = ph.judged && mine.length>1;
   if (ph.type==='S'){ S.sTot++; if(res==='perfect'||res==='good') S.sHit++; }
   if (d!=null && res!=='miss') S.offs.push(d);
   S.fav = Math.max(0, Math.min(100, S.fav + (res==='miss' ? FAV.miss[ph.type] : FAV[res])));
   const ms = d==null ? '' : ` ${d<0?'早':'晚'} ${Math.abs(Math.round(d*1000))} ms`;
   const R = S.chart.replies;
-  if (res==='perfect'){ fb('完美'+ms); setReply(`${name()}：${pick(ph.type==='S'?R.spot:R.hit)}`,'good'); }
-  else if (res==='good'){ fb('命中'+ms); setReply(`${name()}：${pick(ph.type==='S'?R.spot:R.hit)}`,'good'); }
-  else if (res==='assist'){ fb('幕僚代答'); setReply('幕僚：這部分由我來補充說明。','aide'); }
-  else { fb('漏拍'+ms); setReply(ph.type==='S' ? '記者：……候選人沒有回答。' : '市民：……他是不是沒聽到？','bad'); }
+  const line = () => pick(ph.type==='S' ? R.spot : ph.type==='D' ? (R.double||R.hit) : R.hit);
+  if (res==='perfect'){ fb('完美'+ms); burst(ph.type==='D'&&!last ? '好！' : '讚！','perfect'); if(ph.type!=='D'||last) setReply(`${name()}：${line()}`,'good'); }
+  else if (res==='good'){ fb('命中'+ms); burst('好！','good'); if(ph.type!=='D'||last) setReply(`${name()}：${line()}`,'good'); }
+  else if (res==='assist'){ fb('幕僚代答'); if(ph.type!=='D'||last) setReply('幕僚：這部分由我來補充說明。','aide'); }
+  else { fb('漏拍'+ms); burst('漏！','miss'); setReply(ph.type==='S' ? '記者：……候選人沒有回答。' : '市民：……他是不是沒聽到？','bad'); }
   if (p===S.cur) drawTrack(ph, S.chart.targetBeat);
   hud(S);
 }
 
 // 每 frame 檢查：幕僚代答到點自動判定、超過命中窗判漏拍
 export function autoJudge(S, heard, adj){
-  S.ph.forEach((ph,p)=>{
-    if (ph.judged) return;
-    const T=targetTime(S,p);
-    if (ph.assist && heard>=T) judge(S,p,'assist',null);
-    else if (!ph.assist && adj > T + WINDOWS[ph.type].g) judge(S,p,'miss',null);
+  S.tg.forEach((g,k)=>{
+    if (g.judged) return;
+    const ph=S.ph[g.p], T=targetTime(S,g.p,g.off);
+    if (ph.assist && heard>=T) judge(S,k,'assist',null);
+    else if (!ph.assist && adj > T + WINDOWS[ph.type].g) judge(S,k,'miss',null);
   });
 }

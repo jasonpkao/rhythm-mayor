@@ -1,6 +1,8 @@
 # 第一章 插圖提示詞（美式漫畫風）
 
-每題一張，對應 `charts/chapter1.json` 的 `phrases` 順序。建議檔名 `art/ch1_01.png` … `ch1_16.png`。
+每題一張，對應 `charts/chapter1.json` 的 `phrases` 順序。建議檔名 `art/ch1_01.png` … `ch1_16.png`。生好後在譜面該題加上 `"image": "art/ch1_01.png"`，遊戲就會把圖放進漫畫格背景（沒設定時用程式畫的角色）。
+
+註：2026-10-22 譜面改版後第 6、9、12、13、16 題是「連珠炮」，但圖的內容不受影響。
 
 ## 共用設定（每次生成都附上）
 
@@ -17,7 +19,7 @@
 
 ---
 
-## 一般陳情（N）：市民面向鏡頭說話，畫面偏暖
+## 一般陳情（N）與連珠炮（D）：市民面向鏡頭說話，畫面偏暖
 
 | # | 陳情 | Prompt |
 |---|---|---|
@@ -28,7 +30,7 @@
 | 06 | 公車站可以加個遮雨棚嗎？ | A student and an elderly man huddled at a bare bus stop pole in pouring rain, one tiny umbrella between them, splashes from a passing bus drawn as dramatic water arcs, blue-grey storm palette. |
 | 08 | 人行道都被機車停滿了。 | A mother pushing a stroller forced onto the street because the sidewalk is completely blocked by rows of parked scooters, cars zooming past with motion blur, she glares at the viewer, low dramatic angle. |
 | 09 | 老公寓沒電梯，阿嬤下不了樓。 | A grandmother with a cane at the top of a steep, narrow five-story walk-up stairwell, her grandson holding her arm and looking at the viewer for help, vertiginous top-down perspective of the stairs spiraling down. |
-| 10 | 垃圾車可以晚一點來嗎？我下班趕不上。 | A young worker in a uniform sprinting down the street holding two garbage bags, a yellow garbage truck disappearing around the corner ahead, wristwatch showing late evening, comic speed lines and sweat drops. |
+| 11 | 垃圾車可以晚一點來嗎？我下班趕不上。 | A young worker in a uniform sprinting down the street holding two garbage bags, a yellow garbage truck disappearing around the corner ahead, wristwatch showing late evening, comic speed lines and sweat drops. |
 | 12 | 河濱步道的燈可以開晚一點嗎？ | A jogger in a reflective vest stopped on a dark riverside path, lamps along the path switched off in sequence behind them, city lights reflected in the river, cool blue night with a single pool of light. |
 | 13 | 颱風前水溝可以先清一下嗎？ | A shopkeeper crouched by a clogged storm drain stuffed with leaves and plastic bags, ominous swirling typhoon clouds overhead, wind bending trees, sandbags stacked by their shop door, high-tension dramatic sky. |
 | 16 | 學校門口接送好危險。 | Chaotic school gate at pick-up time: double-parked cars, scooters weaving, a crossing guard with a flag blowing a whistle, a small kid with a big backpack holding a parent's hand at the curb, bird's-eye comic panel composition. |
@@ -39,7 +41,7 @@
 |---|---|---|
 | 04 | 這項政見的預算從哪裡來？ | The Candidate seen from behind facing a wall of thrust-out microphones and blinding camera flashes, a reporter in front holding up a tablet with a big red downward chart (no numbers), coral-red rim lighting, tense close-up, sweat drop on the Candidate's neck. |
 | 07 | 您自己平常怎麼通勤？ | A reporter pointing knowingly past the Candidate toward a shiny black chauffeured sedan parked behind them, other reporters leaning in with smirks, flash bursts, awkward-moment composition with the Candidate glancing back. |
-| 11 | 昨晚停電，您第一時間在哪？ | Split panel: left side a dark city block in a blackout with residents holding phone flashlights; right side the Candidate surrounded by reporters under harsh flash lights, a microphone shoved toward their face, dramatic diagonal panel border. |
+| 10 | 昨晚停電，您第一時間在哪？ | Split panel: left side a dark city block in a blackout with residents holding phone flashlights; right side the Candidate surrounded by reporters under harsh flash lights, a microphone shoved toward their face, dramatic diagonal panel border. |
 | 14 | 可以不看稿講三十秒嗎？ | Close-up of the Aide's hand pulling a stack of cue cards away from the Candidate's podium, a reporter holding up a stopwatch, the Candidate's eyes wide in a dramatic extreme close-up with speed lines radiating outward. |
 | 15 | 哪一項承諾最可能做不到？ | The Candidate standing in front of a campaign billboard covered with many blank promise icons (house, bus, tree, school), one icon cracking apart, reporters' shadows looming large across the billboard, low-angle heroic-but-uneasy shot. |
 

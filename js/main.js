@@ -2,8 +2,8 @@
 import { ctx, ensureAudio, newBus, pause, resume, outLat, blip, kick } from './audio.js';
 import { schedule, nextOpen } from './scheduler.js';
 import { classify, judge, autoJudge } from './judge.js';
-import { $, mode, show, showCalibNote, setReply, fb, hud, initTrack, drawTrack, updAideBtn, applyVis, showResult } from './ui.js';
-import { loadChart } from './chart.js';
+import { $, mode, show, showCalibNote, setReply, fb, hud, initTrack, drawTrack, updAideBtn, applyVis, showResult, resetComic } from './ui.js';
+import { loadChart, targetsOf } from './chart.js';
 
 const CHART_URL = 'charts/chapter1.json';
 const CALIB_BEAT = 60 / 100; // 校正固定 100 BPM，不隨譜面改變
@@ -17,8 +17,9 @@ showCalibNote(calib);
 
 // ---- game ----
 function newGame(){
-  const ph = chart.phrases.map(({type,text}) => ({ type, text, assist:false, forced:false, judged:false, result:null }));
-  return { chart, ph, t0: ctx.currentTime + .6, next: 0, vis: [], fav: 50, meter: 0, assists: 0, events: 0, locked: new Set(),
+  const ph = chart.phrases.map(({type,text,who,look,image}) => ({ type, text, who, look, image, assist:false, forced:false, judged:false, result:null }));
+  const tg = ph.flatMap((x,p) => targetsOf(x.type, chart).map(off => ({ p, off, judged:false, result:null })));
+  return { chart, ph, tg, t0: ctx.currentTime + .6, next: 0, vis: [], fav: 50, meter: 0, assists: 0, events: 0, locked: new Set(),
     stats: { perfect:0, good:0, miss:0, assist:0 }, sTot: 0, sHit: 0, endT: null, cur: -1, offs: [] };
 }
 
@@ -28,7 +29,7 @@ function press(){
   const btn=$('#btn-press'); btn.classList.add('hit'); setTimeout(()=>btn.classList.remove('hit'),80);
   const r = classify(S, now-outLat()-calib);
   if (!r){ fb('空拍'); return; }
-  judge(S, r.p, r.res, r.d);
+  judge(S, r.k, r.res, r.d);
 }
 
 function assist(){
@@ -41,7 +42,7 @@ function assist(){
   fb(`第 ${p+1} 題由幕僚代答`);
   if (S.meter>=100){
     const q=p+1;
-    if (q<S.ph.length){ S.ph[q].type='S'; S.ph[q].forced=true; S.locked.add(q); S.locked.add(q+1); }
+    if (q<S.ph.length){ S.ph[q].type='S'; S.ph[q].forced=true; S.tg=S.tg.filter(g=>g.p!==q || g.off===chart.targetBeat); S.locked.add(q); S.locked.add(q+1); }
     S.meter=0; S.events++;
     const bn=$('#banner'); bn.hidden=false; bn.textContent='「誰在答詢」量表滿了：再下一題必須本人回答，而且接下來兩題不能找幕僚。';
     const r=run; setTimeout(()=>{ if(r===run) bn.hidden=true; }, chart.beat*chart.phraseLength*2*1000);
@@ -62,7 +63,7 @@ function loop(id){
 function start(){
   ensureAudio(); newBus(); setPaused(false);
   try { localStorage.setItem('rm-name', $('#name').value.trim()); } catch(e){}
-  S=newGame(); show('play'); hud(S); fb(''); setReply('',''); $('#banner').hidden=true; drawTrack(null,-1); updAideBtn(S);
+  S=newGame(); show('play'); hud(S); fb(''); setReply('',''); $('#banner').hidden=true; resetComic(); drawTrack(null,-1); updAideBtn(S);
   const id=++run; requestAnimationFrame(()=>loop(id));
 }
 

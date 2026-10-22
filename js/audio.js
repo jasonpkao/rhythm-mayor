@@ -16,7 +16,16 @@ export function blip(t,f,d,type='sine',v=.25){ const o=ctx.createOscillator(),g=
 export function kick(t,v=.5){ const o=ctx.createOscillator(),g=ctx.createGain(); o.frequency.setValueAtTime(150,t); o.frequency.exponentialRampToValueAtTime(45,t+.12); g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.0001,t+.18); o.connect(g).connect(bus); o.start(t); o.stop(t+.2); }
 export function bass(t,f,beat){ const o=ctx.createOscillator(),g=ctx.createGain(); o.type='triangle'; o.frequency.setValueAtTime(f,t); env(g,t,.22,beat*3.6); o.connect(g).connect(bus); o.start(t); o.stop(t+beat*3.8); }
 let noiseBuf;
-export function snap(t,v=.35){
+function noise(){
   if(!noiseBuf){ noiseBuf=ctx.createBuffer(1,ctx.sampleRate*.08,ctx.sampleRate); const d=noiseBuf.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*(1-i/d.length); }
-  const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain(); s.buffer=noiseBuf; f.type='highpass'; f.frequency.value=1800; g.gain.value=v; s.connect(f).connect(g).connect(bus); s.start(t);
+  return noiseBuf;
 }
+export function snap(t,v=.35){
+  const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain(); s.buffer=noise(); f.type='highpass'; f.frequency.value=1800; g.gain.value=v; s.connect(f).connect(g).connect(bus); s.start(t);
+}
+// 伴奏用：短促高頻噪音（hi-hat）與拍手
+export function hat(t,v=.08){
+  const s=ctx.createBufferSource(),f=ctx.createBiquadFilter(),g=ctx.createGain(); s.buffer=noise(); f.type='highpass'; f.frequency.value=7000;
+  g.gain.setValueAtTime(v,t); g.gain.exponentialRampToValueAtTime(.0001,t+.04); s.connect(f).connect(g).connect(bus); s.start(t); s.stop(t+.05);
+}
+export function clap(t,v=.22){ snap(t,v); snap(t+.012,v*.7); }

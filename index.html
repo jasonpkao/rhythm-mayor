@@ -22,6 +22,7 @@
       <ul class="how">
         <li>一般陳情：亮六格黃燈，第七格按 <kbd>空白鍵</kbd> 或點大按鈕。</li>
         <li>臨場提問：沒有預告，只響兩聲警示，判定時間窗縮短一半。</li>
+        <li>連珠炮：第一拍多一聲半拍，第七拍和第七拍半要各按一次。</li>
         <li>幕僚接話：按 <kbd>F</kbd> 讓幕僚代答下一題。用三次量表會滿，下一題必須本人回答。</li>
       </ul>
       <div class="row">
@@ -60,9 +61,15 @@
       <div class="meter"><div class="lbl"><span>誰在答詢</span><span id="aide-n" class="mono">0</span></div><div id="aide-wrap" class="bar aide"><i id="aide-bar" style="width:0"></i></div></div>
     </div>
     <div id="banner" class="banner" hidden></div>
-    <div class="panel card">
+    <div id="comic" class="comic">
+      <img id="scene-img" class="scene-img" alt="" hidden>
+      <div id="caption" class="caption">第一章</div>
       <span id="tag" class="tag">第 0 / 16 題</span>
-      <p id="ask" class="ask">準備……</p>
+      <div class="scene">
+        <div id="portrait" class="portrait" aria-hidden="true"></div>
+        <div class="bubble"><span id="who" class="who-lbl"></span><p id="ask" class="ask">準備……</p></div>
+      </div>
+      <div id="burst" class="burst" aria-hidden="true"></div>
       <p id="reply" class="reply"></p>
     </div>
     <div id="track" class="track" aria-hidden="true"></div>
