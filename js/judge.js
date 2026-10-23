@@ -1,7 +1,7 @@
 // ---- judge ----
 // 判定以「判定點」為單位（S.tg）：一般與臨場題一個點，連珠炮兩個點（第七拍、第七拍半）
 import { targetTime } from './scheduler.js';
-import { fb, setReply, drawTrack, hud, name, burst } from './ui.js';
+import { fb, setReply, drawTrack, hud, name, burst, aideAct } from './ui.js';
 
 // 判定窗（秒）：p = 完美、g = 命中
 export const WINDOWS = { N: {p:.045, g:.10}, D: {p:.045, g:.10}, S: {p:.022, g:.05} };
@@ -35,7 +35,7 @@ export function judge(S,k,res,d){
   const line = () => pick(ph.type==='S' ? R.spot : ph.type==='D' ? (R.double||R.hit) : R.hit);
   if (res==='perfect'){ fb('完美'+ms); burst(ph.type==='D'&&!last ? '好！' : '讚！','perfect'); if(ph.type!=='D'||last) setReply(`${name()}：${line()}`,'good'); }
   else if (res==='good'){ fb('命中'+ms); burst('好！','good'); if(ph.type!=='D'||last) setReply(`${name()}：${line()}`,'good'); }
-  else if (res==='assist'){ fb('幕僚代答'); if(ph.type!=='D'||last) setReply('幕僚：這部分由我來補充說明。','aide'); }
+  else if (res==='assist'){ fb('幕僚代答'); aideAct(); if(ph.type!=='D'||last) setReply('幕僚：這部分由我來補充說明。','aide'); }
   else { fb('漏拍'+ms); burst('漏！','miss'); setReply(ph.type==='S' ? '記者：……候選人沒有回答。' : '市民：……他是不是沒聽到？','bad'); }
   if (p===S.cur) drawTrack(ph, S.chart.targetBeat);
   hud(S);

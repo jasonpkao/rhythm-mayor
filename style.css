@@ -105,7 +105,7 @@ button.small{padding:6px 12px;font-size:.85rem}
 .comic.shake{animation:shake .25s}
 @keyframes shake{25%{transform:translateX(-5px) rotate(-.4deg)}75%{transform:translateX(5px) rotate(.4deg)}}
 .scene-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.55;z-index:0}
-.comic>*:not(.scene-img):not(.burst){position:relative;z-index:1}
+.comic>*:not(.scene-img):not(.burst):not(.stage):not(.slam):not(.double){position:relative;z-index:1}
 .burst{z-index:2}
 .caption{align-self:flex-start;background:#f5e7b8;color:#1b1608;font-family:var(--f-display);font-size:.85rem;padding:2px 10px;border:2px solid #05070b;box-shadow:2px 2px 0 #05070b;transform:rotate(-1deg)}
 .scene{display:flex;gap:12px;align-items:flex-end}
@@ -148,3 +148,77 @@ button.small{padding:6px 12px;font-size:.85rem}
 .cell.target.dbl.now{animation:tap .3s 2}
 @media (max-width:520px){.double b{font-size:2.2rem}}
 @media (prefers-reduced-motion:reduce){.double.show{animation:none;opacity:1;transform:translate(-50%,-50%)}.double.show .taps i{animation:none}}
+
+/* ---- 按鈕美術 ---- */
+button .ico{width:1.1em;height:1.1em;vertical-align:-.18em;margin-right:.4em}
+.press,.aidebtn{display:flex;align-items:flex-end;justify-content:center;gap:10px;overflow:hidden;position:relative;padding:0 12px;
+  border:3px solid #05070b;box-shadow:4px 4px 0 #05070b;border-radius:6px}
+.press{background:
+  radial-gradient(circle at 1px 1px,rgba(5,7,11,.18) 1.3px,transparent 1.5px) 0 0/8px 8px,var(--signal)}
+.aidebtn{background:radial-gradient(circle at 1px 1px,rgba(127,166,232,.25) 1.3px,transparent 1.5px) 0 0/8px 8px,var(--panel-2)}
+.press:active,.press.hit{transform:translate(2px,2px);box-shadow:2px 2px 0 #05070b}
+.fig-wrap{width:84px;height:92px;flex:none;align-self:flex-end}
+.fig{width:100%;height:100%;display:block}
+.press .lbl,.aidebtn .lbl{display:flex;flex-direction:column;align-self:center;line-height:1.15;text-align:left}
+.press .lbl small,.aidebtn .lbl small{font-family:var(--f-mono);font-size:.7rem;opacity:.65}
+.press .lbl{font-family:var(--f-display);font-size:1.5rem}
+.aidebtn .lbl{font-size:.95rem}
+.fig .arm{transform-origin:70px 74px;transition:transform .08s}
+.press.hit .fig .arm{transform:rotate(-14deg) translateY(-6px)}
+.press.hit .fig.cand{animation:hop .18s}
+.fig.aide .clip{transform-origin:67px 98px}
+.aidebtn.act .fig.aide{animation:aidego .7s ease-out}
+.aidebtn.act .fig.aide .clip{animation:flip .7s ease-out}
+.aidebtn[disabled] .fig.aide{filter:grayscale(1) brightness(.7)}
+.aidebtn[disabled] .lbl::after{content:"（不能用）";font-size:.7rem;color:var(--muted)}
+@keyframes hop{50%{transform:translateY(-6px)}}
+@keyframes aidego{0%{transform:translateX(30px);opacity:.3}40%{transform:translateX(-4px);opacity:1}100%{transform:none}}
+@keyframes flip{30%{transform:rotate(-25deg)}60%{transform:rotate(8deg)}}
+@media (max-width:520px){.fig-wrap{width:60px;height:72px}.press .lbl{font-size:1.15rem}.aidebtn .fig-wrap{display:none}}
+
+/* ---- 段落舞台：漫畫格最底層的背景動畫 ---- */
+.stage{position:absolute;inset:0;z-index:0;opacity:.55;pointer-events:none}
+.stage svg{width:100%;height:100%;display:block}
+.stage *{transform-box:fill-box}
+/* 0 社區走讀 */
+.stage .win{opacity:.15;animation:win calc(var(--beat,.6s)*8) steps(1) infinite;animation-delay:calc(var(--dl)*1s)}
+@keyframes win{0%{opacity:.15}35%{opacity:.95}70%{opacity:.15}}
+.stage .glow{animation:flick calc(var(--beat,.6s)*4) infinite}
+@keyframes flick{0%,100%{opacity:.25}48%{opacity:.25}50%{opacity:.05}53%{opacity:.3}}
+.stage .scoot{animation:ride var(--d) linear infinite;animation-delay:var(--dl)}
+@keyframes ride{from{transform:translateX(-60px)}to{transform:translateX(660px)}}
+/* 1 菜市場 */
+.stage .bulb{transform-box:view-box;transition:transform calc(var(--beat,.6s)*.9) ease-in-out;transform:rotate(10deg)}
+.stage.odd .bulb{transform:rotate(-10deg)}
+.stage .steam{opacity:0;animation:steam 1.8s ease-out infinite;animation-delay:calc(var(--dl)*1s)}
+@keyframes steam{0%{opacity:0;transform:translateY(10px)}30%{opacity:.8}100%{opacity:0;transform:translateY(-30px)}}
+/* 2 電視辯論 */
+.stage .beam{transform-box:view-box;animation:sweepL calc(var(--beat,.6s)*8) ease-in-out infinite alternate}
+.stage .beam.l{transform-origin:60px 0}.stage .beam.r{transform-origin:540px 0;animation-name:sweepR}
+@keyframes sweepL{from{transform:rotate(-14deg)}to{transform:rotate(30deg)}}
+@keyframes sweepR{from{transform:rotate(14deg)}to{transform:rotate(-30deg)}}
+.stage .onair,.stage .rec{animation:blink calc(var(--beat,.6s)*2) steps(1) infinite}
+@keyframes blink{50%{opacity:.35}}
+/* 3 選前之夜 */
+.stage .fw{transform-box:view-box;opacity:0;animation:fw calc(var(--beat,.6s)*4) ease-out infinite;animation-delay:calc(var(--dl)*1s)}
+@keyframes fw{0%{opacity:1;transform:scale(.1)}60%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.15)}}
+.stage.beat .fan:not(.odd){animation:hop calc(var(--beat,.6s)*.5)}
+.stage.beat.odd .fan.odd{animation:hop calc(var(--beat,.6s)*.5)}
+.stage .stick{transform-box:view-box;transition:transform calc(var(--beat,.6s)*.8);transform:rotate(-18deg)}
+.stage.odd .stick{transform:rotate(18deg)}
+/* 有插圖時壓低舞台 */
+.comic:has(.scene-img:not([hidden])) .stage{opacity:.2}
+
+/* 段落轉場：大字甩進來 */
+.slam{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;
+  font-family:var(--f-display);font-size:2.2rem;color:#fffdf5;-webkit-text-stroke:2px #05070b;text-shadow:5px 5px 0 #05070b;text-align:center;
+  background:repeating-conic-gradient(from 0deg at 50% 55%,color-mix(in srgb,var(--tone) 70%,transparent) 0 8deg,transparent 8deg 16deg);
+  opacity:0;visibility:hidden}
+.slam small{font-family:var(--f-mono);font-size:.9rem;-webkit-text-stroke:0;text-shadow:none;background:#05070b;color:var(--signal);padding:2px 10px;margin-bottom:6px}
+.slam.go{visibility:visible;animation:slam 1.1s ease-out forwards}
+/* 段落第一題就是連珠炮時，「按兩下！」等轉場大字退場後才出現 */
+.double.show.late{animation-delay:1s}
+@keyframes slam{0%{opacity:0;transform:scale(2.2) rotate(-8deg)}14%{opacity:1;transform:scale(.95) rotate(-3deg)}22%{transform:scale(1) rotate(-3deg)}65%{opacity:1}100%{opacity:0;transform:scale(1) rotate(-3deg)}}
+@media (max-width:520px){.slam{font-size:1.5rem}}
+@media (prefers-reduced-motion:reduce){.stage *{animation:none!important;transition:none!important}.slam.go{animation-duration:1.1s;animation-name:fadeonly}
+  @keyframes fadeonly{0%,80%{opacity:1}100%{opacity:0}}}

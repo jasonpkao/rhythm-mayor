@@ -8,7 +8,7 @@
   - `js/audio.js` 音效、`js/scheduler.js` 拍點排程、`js/judge.js` 判定與好感度、`js/ui.js` 畫面、`js/chart.js` 譜面載入、`js/main.js` 遊戲流程／校正／輸入
   - `charts/chapter1.json` 譜面（BPM、每題拍型與文字、回應台詞；`events` 預留給干擾事件）
   - `_backup/index.poc-single-file.html` 拆分前的單檔版本
-- 已有：連珠炮拍型（第七拍＋第七拍半）、四段式伴奏層、漫畫格畫面（`js/art.js` 程式繪製角色，譜面 `image` 可換成插圖）、暫停／重玩、第七拍判定、臨場提問拍、幕僚接話與「誰在答詢」量表、好感度、延遲校正、結算畫面（支持者/批評者兩則標題）。
+- 已有：連珠炮拍型（第七拍＋第七拍半）、四段式伴奏層、漫畫格畫面（`js/art.js` 程式繪製角色、按鈕美術與四個段落舞台動畫；段落可用 `stage` 指定舞台編號，譜面 `image` 可換成插圖）、暫停／重玩、第七拍判定、臨場提問拍、幕僚接話與「誰在答詢」量表、好感度、延遲校正、結算畫面（支持者/批評者兩則標題）。
 
 ## 技術原則
 - 所有節拍時間一律用 `audioContext.currentTime` 計算，不用 `setTimeout`／`setInterval` 決定拍點。

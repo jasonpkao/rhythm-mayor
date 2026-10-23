@@ -1,7 +1,7 @@
 // ---- ui ----
 import { nextOpen } from './scheduler.js';
 import { sectionOf } from './chart.js';
-import { portrait } from './art.js';
+import { portrait, candidate, aide, icon, STAGES } from './art.js';
 
 export const $ = s => document.querySelector(s);
 export let mode = 'title';
@@ -37,6 +37,24 @@ export function drawTrack(ph,b){
   });
 }
 
+// 按鈕美術：data-icon 的按鈕加小圖示，回應／幕僚鈕放角色
+export function initArt(){
+  document.querySelectorAll('button[data-icon]').forEach(b => b.insertAdjacentHTML('afterbegin', icon(b.dataset.icon)));
+  $('#fig-cand').innerHTML = candidate();
+  $('#fig-aide').innerHTML = aide();
+}
+// 換段落：換舞台背景，並讓段落標題大字甩進畫面
+function enterSection(chart, sec){
+  const i = chart.sections.indexOf(sec);
+  const k = sec.stage ?? i;
+  $('#stage').innerHTML = STAGES[k % STAGES.length]();
+  $('#stage').dataset.s = k % STAGES.length;
+  if (!sec.name) return;
+  $('#caption').textContent = sec.name;
+  const s=$('#slam'); s.innerHTML = `<small>第 ${i+1} 段</small>${sec.name}`; s.className='slam'; void s.offsetWidth; s.classList.add('go');
+}
+export function aideAct(){ const b=$('#btn-aide'); b.classList.remove('act'); void b.offsetWidth; b.classList.add('act'); }
+
 export function updAideBtn(S){
   const p=nextOpen(S); const b=$('#btn-aide');
   b.disabled = p<0 || S.locked.has(p) || S.ph[p].forced || S.ph[p].assist;
@@ -50,12 +68,13 @@ export function applyVis(S,v){
   if (v.b===0){
     S.cur=v.p;
     const sec=sectionOf(S.chart,v.p);
-    if (sec.from===v.p && sec.name) $('#caption').textContent=sec.name;
+    if (sec.from===v.p) enterSection(S.chart, sec);
     comic.className='comic t-'+(ph.assist?'A':ph.type);
+    comic.style.setProperty('--beat', S.chart.beat+'s');
     $('#who').textContent = ph.type==='S' ? '記者會' : (ph.who||'市民');
     $('#portrait').innerHTML = portrait(ph, v.p);
     // 連珠炮：題目一出現就跳大提示，第七拍前再閃一次
-    const dbl=$('#double'); dbl.className='double'; if (ph.type==='D'){ void dbl.offsetWidth; dbl.classList.add('show'); }
+    const dbl=$('#double'); dbl.className='double'; if (ph.type==='D'){ void dbl.offsetWidth; dbl.classList.add('show'); if (sec.from===v.p && sec.name) dbl.classList.add('late'); }
     const img=$('#scene-img');
     if (ph.image){ img.src=ph.image; img.hidden=false; img.onerror=()=>img.hidden=true; } else img.hidden=true;
     const tag=$('#tag'); tag.className='tag'+(ph.type==='S'?' s':'')+(ph.assist?' a':'');
@@ -66,6 +85,8 @@ export function applyVis(S,v){
   }
   if (v.p===S.cur) drawTrack(ph, v.b);
   if (ph.type==='D' && v.b===S.chart.targetBeat-1){ const d=$('#double'); d.className='double'; void d.offsetWidth; d.classList.add('show','urgent'); }
+  // 舞台每拍動一下（人潮跳、燈泡擺）；奇偶拍換方向
+  const st=$('#stage'); st.classList.remove('beat','odd'); void st.offsetWidth; st.classList.add('beat'); if (v.b%2) st.classList.add('odd');
   if (v.b%2===0){ comic.classList.add('pulse'); setTimeout(()=>comic.classList.remove('pulse'),70); }
 }
 
@@ -76,7 +97,7 @@ export function burst(txt,cls){
 }
 export function resetComic(){
   $('#comic').className='comic'; $('#caption').textContent='第一章'; $('#who').textContent='';
-  $('#portrait').innerHTML=''; $('#scene-img').hidden=true; $('#burst').className='burst'; $('#double').className='double';
+  $('#portrait').innerHTML=''; $('#stage').innerHTML=''; $('#slam').className='slam'; $('#scene-img').hidden=true; $('#burst').className='burst'; $('#double').className='double';
 }
 
 export function showResult(S){

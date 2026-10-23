@@ -2,8 +2,9 @@
 import { ctx, ensureAudio, newBus, pause, resume, outLat, blip, kick } from './audio.js';
 import { schedule, nextOpen } from './scheduler.js';
 import { classify, judge, autoJudge } from './judge.js';
-import { $, mode, show, showCalibNote, setReply, fb, hud, initTrack, drawTrack, updAideBtn, applyVis, showResult, resetComic } from './ui.js';
+import { $, mode, show, showCalibNote, setReply, fb, hud, initTrack, drawTrack, updAideBtn, applyVis, showResult, resetComic, initArt, aideAct } from './ui.js';
 import { loadChart, targetsOf } from './chart.js';
+import { icon } from './art.js';
 
 const CHART_URL = 'charts/chapter1.json';
 const CALIB_BEAT = 60 / 100; // 校正固定 100 BPM，不隨譜面改變
@@ -14,6 +15,7 @@ let calib = 0;
 try { calib = parseFloat(localStorage.getItem('rm-calib')) || 0; } catch (e) {}
 try { $('#name').value = localStorage.getItem('rm-name') || ''; } catch (e) {}
 showCalibNote(calib);
+initArt();
 
 // ---- game ----
 function newGame(){
@@ -39,7 +41,7 @@ function assist(){
   if (ph.assist){ fb('下一題已經安排幕僚'); return; }
   if (S.locked.has(p)||ph.forced){ fb('這題必須本人回答'); return; }
   ph.assist=true; S.assists++; S.meter=Math.min(100,S.meter+34);
-  fb(`第 ${p+1} 題由幕僚代答`);
+  fb(`第 ${p+1} 題由幕僚代答`); aideAct();
   if (S.meter>=100){
     const q=p+1;
     if (q<S.ph.length){ S.ph[q].type='S'; S.ph[q].forced=true; S.tg=S.tg.filter(g=>g.p!==q || g.off===chart.targetBeat); S.locked.add(q); S.locked.add(q+1); }
@@ -74,7 +76,7 @@ function setPaused(v){
   if (ctx) v ? pause() : resume();
   $('#pause').hidden = !v;
   $('#scr-play').classList.toggle('paused', v);
-  $('#btn-pause').innerHTML = v ? '繼續 <kbd>Esc</kbd>' : '暫停 <kbd>Esc</kbd>';
+  $('#btn-pause').innerHTML = v ? icon('play')+'繼續 <kbd>Esc</kbd>' : icon('pause')+'暫停 <kbd>Esc</kbd>';
   if (v) $('#btn-resume').focus();
 }
 function quit(){ run++; setPaused(false); newBus(); show('title'); }
