@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>節奏市長 PoC</title>
+<title>節奏市長</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Huninn&family=Noto+Sans+TC:wght@400;700&family=JetBrains+Mono:wght@500;700&display=swap">
 <link rel="stylesheet" href="style.css">
@@ -12,22 +12,25 @@
   <!-- Title -->
   <section id="scr-title" class="stack">
     <div class="stack">
-      <span class="eyebrow">Proof of concept · 第一章試玩</span>
+      <span class="eyebrow">第一章 · 找到節拍</span>
       <h1>節奏市長</h1>
-      <p class="muted">選前最後一個月，市民一個接一個來陳情。前六拍是預告，你只要在第七拍按下去。</p>
+      <p class="muted">你的候選人很會想政見，但一開口就不在拍子上。選前一個月，鼓手、志工、啦啦隊和小幫手輪流帶你練：從找到心跳開始，最後把口號唸成饒舌。不需要任何音樂底子。</p>
     </div>
     <div class="panel stack">
       <label for="name">替你的候選人取名字</label>
       <input id="name" type="text" maxlength="8" placeholder="例如：林小安" autocomplete="off">
       <ul class="how">
-        <li>一般陳情：亮六格黃燈，第七格按 <kbd>空白鍵</kbd> 或點大按鈕。</li>
-        <li>臨場提問：沒有預告，只響兩聲警示，判定時間窗縮短一半。</li>
-        <li>連珠炮：第一拍多一聲半拍，第七拍和第七拍半要各按一次。</li>
-        <li>幕僚接話：按 <kbd>F</kbd> 讓幕僚代答下一題。用三次量表會滿，下一題必須本人回答。</li>
+        <li><b>先聽，再換你</b>：每一輪前一小節是示範，後一小節換你在同樣的位置按 <kbd>空白鍵</kbd> 或大按鈕。</li>
+        <li><b>鷹架會慢慢拿掉</b>：一開始有引導音和燈號，之後只剩燈號，最後只靠耳朵。</li>
+        <li>四段各教一件事：穩定拍 → 小節與重拍 → 2、4 拍的反拍 → 半拍。結算會告訴你習慣搶拍還是拖拍。</li>
+        <li>跟不上的時候按 <kbd>F</kbd> 請幕僚示範下一輪；用三次後，下一輪必須自己來。</li>
       </ul>
       <div class="row">
         <button id="btn-calib" data-icon="calib">先校正延遲</button>
         <button id="btn-start" class="primary" data-icon="start">開始</button>
+        <label class="speed">練習速度
+          <select id="speed"><option value="0.7">慢（70%）</option><option value="0.85">中（85%）</option><option value="1">原速</option></select>
+        </label>
         <span id="calib-note" class="muted mono"></span>
       </div>
     </div>
@@ -89,7 +92,7 @@
     <div class="panel row" style="gap:20px">
       <div id="grade" class="grade">A</div>
       <div class="stack" style="gap:4px;min-width:0">
-        <span class="eyebrow">第一章結算</span>
+        <span class="eyebrow">第一章結算 · 節奏體檢</span>
         <h2 id="res-title">好感度 0</h2>
       </div>
     </div>
@@ -97,6 +100,7 @@
       <div class="panel head pro"><span class="who">支持者觀點</span><p id="h-pro"></p></div>
       <div class="panel head con"><span class="who">批評者觀點</span><p id="h-con"></p></div>
     </div>
+    <div class="panel stack diag"><span class="eyebrow">每一段的落點（每個點是你按的一下）</span><div id="diag"></div></div>
     <div class="panel"><table class="stats"><tbody id="stats"></tbody></table></div>
     <div class="row"><button id="btn-again" class="primary" data-icon="restart">再玩一次</button><button id="btn-home" data-icon="home">回標題</button></div>
   </section>

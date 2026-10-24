@@ -1,7 +1,8 @@
 // ---- chart data ----
 // 譜面 JSON 格式見 charts/chapter1.json。
 // type: N = 一般陳情、S = 臨場提問、D = 連珠炮（第七拍和第七拍半各按一次）
-export const TYPES = ['N','S','D'];
+//       L = 教學：前一小節示範 hits，後一小節換玩家按；cue 2 = 有引導音＋燈、1 = 只有燈、0 = 只靠耳朵
+export const TYPES = ['N','S','D','L'];
 
 export async function loadChart(url){
   const res = await fetch(url);
@@ -31,4 +32,5 @@ export function sectionOf(chart, p){
 }
 
 // 每題的判定點（相對於題目開頭的拍數）
-export const targetsOf = (type, chart) => type==='D' ? [chart.targetBeat, chart.targetBeat + .5] : [chart.targetBeat];
+export const targetsOf = (ph, chart) => ph.type==='L' ? ph.hits.map(h => chart.phraseLength/2 + h)
+  : ph.type==='D' ? [chart.targetBeat, chart.targetBeat + .5] : [chart.targetBeat];

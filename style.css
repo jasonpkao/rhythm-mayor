@@ -222,3 +222,28 @@ button .ico{width:1.1em;height:1.1em;vertical-align:-.18em;margin-right:.4em}
 @media (max-width:520px){.slam{font-size:1.5rem}}
 @media (prefers-reduced-motion:reduce){.stage *{animation:none!important;transition:none!important}.slam.go{animation-duration:1.1s;animation-name:fadeonly}
   @keyframes fadeonly{0%,80%{opacity:1}100%{opacity:0}}}
+
+/* 教學版：兩小節八格，中間空開；「跟」＝半拍；示範格、只靠耳朵格 */
+.track.lesson{grid-template-columns:repeat(8,1fr)}
+.track.lesson .cell.target{height:52px}
+.cell.bar2{margin-left:10px}
+.cell.demo{border-color:var(--signal);color:var(--signal)}
+.cell.demo.on{background:var(--signal);color:#1b1608}
+.cell.target.blind{border-color:var(--muted);color:var(--muted)}
+.track.lesson .cell.rest{opacity:.4}
+.track.lesson .cell.rest.on{background:color-mix(in srgb,var(--signal) 25%,var(--panel-2));color:var(--text,#fff)}
+.cell.h5{font-size:.72rem}
+.tag.you{background:var(--signal);color:#1b1608}
+.comic.you{animation:you .35s ease-out}
+@keyframes you{0%{box-shadow:0 0 0 0 var(--signal)}100%{box-shadow:0 0 0 10px transparent}}
+.banner.tip{background:color-mix(in srgb,var(--signal) 16%,var(--panel));border-color:var(--signal)}
+.speed{display:flex;align-items:center;gap:6px;font-size:.85rem;color:var(--muted)}
+.speed select{font:inherit;background:var(--panel-2);color:inherit;border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.diag .drow{display:grid;gap:4px;margin-bottom:8px}
+.diag .dname{display:flex;justify-content:space-between;gap:8px;font-size:.9rem}
+.diag .dname span{color:var(--muted);font-size:.8rem}
+.strip{width:100%;height:16px;background:var(--panel-2);border-radius:4px}
+.strip line{stroke:var(--signal);stroke-width:1.5;vector-effect:non-scaling-stroke}
+.strip circle{fill:var(--ok);opacity:.75}
+.diag .axis{display:flex;justify-content:space-between;font-size:.7rem;color:var(--muted)}
+.diag .tips{margin:6px 0 0;padding-left:1.2em;display:grid;gap:6px;font-size:.92rem}

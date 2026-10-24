@@ -14,14 +14,20 @@ let run = 0, paused = false; // run：每次開局 +1，讓舊局的 loop 與計
 let calib = 0;
 try { calib = parseFloat(localStorage.getItem('rm-calib')) || 0; } catch (e) {}
 try { $('#name').value = localStorage.getItem('rm-name') || ''; } catch (e) {}
+try { $('#speed').value = localStorage.getItem('rm-speed') || '1'; } catch (e) {}
+$('#speed').addEventListener('change', e=>{ try{ localStorage.setItem('rm-speed', e.target.value); }catch(err){} });
 showCalibNote(calib);
 initArt();
 
 // ---- game ----
 function newGame(){
-  const ph = chart.phrases.map(({type,text,who,look,image}) => ({ type, text, who, look, image, assist:false, forced:false, judged:false, result:null }));
-  const tg = ph.flatMap((x,p) => targetsOf(x.type, chart).map(off => ({ p, off, judged:false, result:null })));
-  return { chart, ph, tg, t0: ctx.currentTime + .6, next: 0, vis: [], fav: 50, meter: 0, assists: 0, events: 0, locked: new Set(),
+  // 練習速度：只放慢拍長，判定窗不變
+  const speed = parseFloat($('#speed').value) || 1;
+  const ch = { ...chart, beat: chart.beat / speed };
+  const ph = chart.phrases.map(({type,text,who,look,image,hits,cue}) => ({ type, text, who, look, image, hits, cue, assist:false, forced:false, judged:false, result:null }));
+  const tg = ph.flatMap((x,p) => targetsOf(x, chart).map(off => ({ p, off, judged:false, result:null })));
+  ph.forEach((x,p) => x.tgs = tg.filter(g => g.p===p));
+  return { chart: ch, ph, tg, sec: chart.sections.map(()=>({ hit:0, tot:0, offs:[] })), named: new Set(), t0: ctx.currentTime + .6, next: 0, vis: [], fav: 50, meter: 0, assists: 0, events: 0, locked: new Set(),
     stats: { perfect:0, good:0, miss:0, assist:0 }, sTot: 0, sHit: 0, endT: null, cur: -1, offs: [] };
 }
 
@@ -44,10 +50,13 @@ function assist(){
   fb(`第 ${p+1} 題由幕僚代答`); aideAct();
   if (S.meter>=100){
     const q=p+1;
-    if (q<S.ph.length){ S.ph[q].type='S'; S.ph[q].forced=true; S.tg=S.tg.filter(g=>g.p!==q || g.off===chart.targetBeat); S.locked.add(q); S.locked.add(q+1); }
+    if (q<S.ph.length){
+      const f=S.ph[q]; f.forced=true; S.locked.add(q); S.locked.add(q+1);
+      if (f.type!=='L'){ f.type='S'; S.tg=S.tg.filter(g=>g.p!==q || g.off===chart.targetBeat); f.tgs=S.tg.filter(g=>g.p===q); }
+    }
     S.meter=0; S.events++;
-    const bn=$('#banner'); bn.hidden=false; bn.textContent='「誰在答詢」量表滿了：再下一題必須本人回答，而且接下來兩題不能找幕僚。';
-    const r=run; setTimeout(()=>{ if(r===run) bn.hidden=true; }, chart.beat*chart.phraseLength*2*1000);
+    const bn=$('#banner'); bn.hidden=false; bn.className='banner'; bn.textContent='「誰在答詢」量表滿了：再下一題必須本人回答，而且接下來兩題不能找幕僚。';
+    const r=run; setTimeout(()=>{ if(r===run) bn.hidden=true; }, S.chart.beat*chart.phraseLength*2*1000);
   }
   hud(S); updAideBtn(S);
 }
@@ -58,7 +67,7 @@ function loop(id){
   const heard = ctx.currentTime - outLat();
   while (S.vis.length && S.vis[0].t <= heard) applyVis(S, S.vis.shift());
   autoJudge(S, heard, heard - calib);
-  if (S.endT!==null && heard > S.endT + chart.beat) return showResult(S);
+  if (S.endT!==null && heard > S.endT + S.chart.beat) return showResult(S);
   requestAnimationFrame(()=>loop(id));
 }
 
